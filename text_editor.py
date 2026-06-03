@@ -8,51 +8,46 @@ class TextEditor:
     """Receiver - El editor de texto que ejecuta las operaciones reales."""
 
     def __init__(self):
-        self._text: list[str] = []  # Simula un StringBuilder
-        self._clipboard: str = ""
+        self.clipboard: str = ""          # - clipboard: String
+        self.text: list[str] = []         # - text: StringBuilder (list simula StringBuilder)
 
-    # ── Operaciones del editor ──────────────────────────────────
+    # ── Operaciones del editor (+ public) ───────────────────────
 
     def write(self, position: int, text: str) -> None:
         """Inserta texto en la posición indicada."""
-        content = self.get_text()
-        new_content = content[:position] + text + content[position:]
-        self._text = list(new_content)
+        content = self.getText()
+        newContent = content[:position] + text + content[position:]
+        self.text = list(newContent)
 
     def delete(self, start: int, length: int) -> str:
         """Elimina 'length' caracteres desde 'start'. Retorna el texto eliminado."""
-        content = self.get_text()
+        content = self.getText()
         deleted = content[start:start + length]
-        new_content = content[:start] + content[start + length:]
-        self._text = list(new_content)
+        newContent = content[:start] + content[start + length:]
+        self.text = list(newContent)
         return deleted
 
     def copy(self, start: int, length: int) -> None:
         """Copia 'length' caracteres desde 'start' al clipboard."""
-        content = self.get_text()
-        self._clipboard = content[start:start + length]
+        content = self.getText()
+        self.clipboard = content[start:start + length]
 
     def cut(self, start: int, length: int) -> str:
-        """Corta 'length' caracteres desde 'start' al clipboard. Retorna el texto cortado."""
-        content = self.get_text()
-        self._clipboard = content[start:start + length]
-        cut_text = self._clipboard
-        new_content = content[:start] + content[start + length:]
-        self._text = list(new_content)
-        return cut_text
+        """Corta 'length' caracteres desde 'start' al clipboard."""
+        content = self.getText()
+        self.clipboard = content[start:start + length]
+        cutText = self.clipboard
+        newContent = content[:start] + content[start + length:]
+        self.text = list(newContent)
+        return cutText
 
     def paste(self, position: int) -> None:
         """Pega el contenido del clipboard en la posición indicada."""
-        if self._clipboard:
-            self.write(position, self._clipboard)
+        if self.clipboard:
+            self.write(position, self.clipboard)
 
-    # ── Getters ─────────────────────────────────────────────────
+    def getClipboard(self) -> str:
+        return self.clipboard
 
-    def get_text(self) -> str:
-        return "".join(self._text)
-
-    def get_clipboard(self) -> str:
-        return self._clipboard
-
-    def set_clipboard(self, text: str) -> None:
-        self._clipboard = text
+    def getText(self) -> str:
+        return "".join(self.text)

@@ -1,6 +1,6 @@
 """
 Patrón Command - Invoker
-Gestiona el historial de comandos para undo/redo.
+TextEditorInvoker: executeCommand, redoLastCommand, undoLastCommand
 """
 
 from commands import Command
@@ -11,28 +11,28 @@ class TextEditorInvoker:
 
     def __init__(self):
         self._history: list[Command] = []
-        self._redo_stack: list[Command] = []
+        self._redoStack: list[Command] = []
 
-    def execute_command(self, command: Command) -> None:
+    def executeCommand(self, command: Command) -> None:
         """Ejecuta un comando y lo agrega al historial."""
         command.execute()
         self._history.append(command)
-        self._redo_stack.clear()  # Al ejecutar un nuevo comando, se limpia el redo
+        self._redoStack.clear()
 
-    def undo_last_command(self) -> bool:
+    def undoLastCommand(self) -> bool:
         """Deshace el último comando. Retorna True si se pudo deshacer."""
         if not self._history:
             return False
         command = self._history.pop()
         command.undo()
-        self._redo_stack.append(command)
+        self._redoStack.append(command)
         return True
 
-    def redo_last_command(self) -> bool:
+    def redoLastCommand(self) -> bool:
         """Rehace el último comando deshecho. Retorna True si se pudo rehacer."""
-        if not self._redo_stack:
+        if not self._redoStack:
             return False
-        command = self._redo_stack.pop()
+        command = self._redoStack.pop()
         command.redo()
         self._history.append(command)
         return True
@@ -42,5 +42,5 @@ class TextEditorInvoker:
         return list(self._history)
 
     @property
-    def redo_stack(self) -> list[Command]:
-        return list(self._redo_stack)
+    def redoStack(self) -> list[Command]:
+        return list(self._redoStack)

@@ -1,5 +1,6 @@
 """
 Patrón Command - Interfaz y Comandos Concretos
+Nombres exactos del diagrama UML.
 """
 
 from abc import ABC, abstractmethod
@@ -7,11 +8,11 @@ from text_editor import TextEditor
 
 
 # ═══════════════════════════════════════════════════════════════
-#  Interfaz Command
+#  «interface» Command
 # ═══════════════════════════════════════════════════════════════
 
 class Command(ABC):
-    """Interfaz Command con execute, undo, redo."""
+    """«interface» Command: execute, undo, redo."""
 
     @abstractmethod
     def execute(self) -> None:
@@ -34,55 +35,55 @@ class WriteCommand(Command):
     """Escribe texto en una posición del editor."""
 
     def __init__(self, editor: TextEditor, position: int, text: str):
-        self._editor = editor
-        self._position = position
-        self._text = text
+        self.editor = editor
+        self.position: int = position     # - position: int
+        self.text: str = text             # - text: int  (str en Python)
 
     def execute(self) -> None:
-        self._editor.write(self._position, self._text)
+        self.editor.write(self.position, self.text)
 
     def undo(self) -> None:
-        self._editor.delete(self._position, len(self._text))
+        self.editor.delete(self.position, len(self.text))
 
     def redo(self) -> None:
         self.execute()
 
     def __repr__(self) -> str:
-        return f"Write(pos={self._position}, text='{self._text}')"
+        return f"Write(pos={self.position}, text='{self.text}')"
 
 
 class DeleteCommand(Command):
     """Elimina texto desde una posición en el editor."""
 
     def __init__(self, editor: TextEditor, start: int, length: int):
-        self._editor = editor
-        self._start = start
-        self._length = length
-        self._deleted_text: str = ""
+        self.editor = editor
+        self.deletedText: str = ""        # - deletedText: String
+        self.length: int = length         # - length: int
+        self.start: int = start           # - start: int
 
     def execute(self) -> None:
-        self._deleted_text = self._editor.delete(self._start, self._length)
+        self.deletedText = self.editor.delete(self.start, self.length)
 
     def undo(self) -> None:
-        self._editor.write(self._start, self._deleted_text)
+        self.editor.write(self.start, self.deletedText)
 
     def redo(self) -> None:
         self.execute()
 
     def __repr__(self) -> str:
-        return f"Delete(start={self._start}, len={self._length}, deleted='{self._deleted_text}')"
+        return f"Delete(start={self.start}, len={self.length}, deleted='{self.deletedText}')"
 
 
 class CopyCommand(Command):
     """Copia texto al clipboard sin modificar el editor."""
 
     def __init__(self, editor: TextEditor, start: int, length: int):
-        self._editor = editor
-        self._start = start
-        self._length = length
+        self.editor = editor
+        self.length: int = length         # - length: int
+        self.start: int = start           # - start: int
 
     def execute(self) -> None:
-        self._editor.copy(self._start, self._length)
+        self.editor.copy(self.start, self.length)
 
     def undo(self) -> None:
         # Copy no modifica el texto, nada que deshacer
@@ -92,50 +93,49 @@ class CopyCommand(Command):
         self.execute()
 
     def __repr__(self) -> str:
-        return f"Copy(start={self._start}, len={self._length})"
+        return f"Copy(start={self.start}, len={self.length})"
 
 
 class CutCommand(Command):
     """Corta texto del editor y lo pone en el clipboard."""
 
     def __init__(self, editor: TextEditor, start: int, length: int):
-        self._editor = editor
-        self._start = start
-        self._length = length
-        self._cut_text: str = ""
+        self.editor = editor
+        self.cutText: str = ""            # - cutText: String
+        self.length: int = length         # - length: int
+        self.start: int = start           # - start: int
 
     def execute(self) -> None:
-        self._cut_text = self._editor.cut(self._start, self._length)
+        self.cutText = self.editor.cut(self.start, self.length)
 
     def undo(self) -> None:
-        self._editor.write(self._start, self._cut_text)
-        self._editor.set_clipboard(self._cut_text)
+        self.editor.write(self.start, self.cutText)
 
     def redo(self) -> None:
         self.execute()
 
     def __repr__(self) -> str:
-        return f"Cut(start={self._start}, len={self._length}, cut='{self._cut_text}')"
+        return f"Cut(start={self.start}, len={self.length}, cut='{self.cutText}')"
 
 
 class PasteCommand(Command):
     """Pega el contenido del clipboard en una posición."""
 
     def __init__(self, editor: TextEditor, position: int):
-        self._editor = editor
-        self._position = position
-        self._pasted_text: str = ""
+        self.editor = editor
+        self.position: int = position     # - position: int
+        self._pastedLen: int = 0          # auxiliar para undo
 
     def execute(self) -> None:
-        self._pasted_text = self._editor.get_clipboard()
-        self._editor.paste(self._position)
+        self._pastedLen = len(self.editor.getClipboard())
+        self.editor.paste(self.position)
 
     def undo(self) -> None:
-        if self._pasted_text:
-            self._editor.delete(self._position, len(self._pasted_text))
+        if self._pastedLen > 0:
+            self.editor.delete(self.position, self._pastedLen)
 
     def redo(self) -> None:
         self.execute()
 
     def __repr__(self) -> str:
-        return f"Paste(pos={self._position}, pasted='{self._pasted_text}')"
+        return f"Paste(pos={self.position})"

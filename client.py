@@ -260,12 +260,12 @@ class Client:
         self._clipLabel.config(text=clip if clip else "(vacío)")
 
         self._historyList.delete(0, "end")
-        for i, cmd in enumerate(self._invoker.history):
+        for i, cmd in enumerate(self._invoker._history):
             self._historyList.insert("end", f" {i + 1}. {cmd}")
 
-        if self._invoker.redoStack:
+        if self._invoker._redoStack:
             self._historyList.insert("end", " ─── redo pendiente ───")
-            for cmd in reversed(self._invoker.redoStack):
+            for cmd in reversed(self._invoker._redoStack):
                 self._historyList.insert("end", f" ↪ {cmd}")
 
         self._historyList.see("end")
@@ -278,7 +278,7 @@ class Client:
         selText = f"Sel: [{sel[0]}:{sel[0]+sel[1]}] ({sel[1]} chars)" if sel else "Sel: ninguna"
         self._status.config(
             text=f"Pos: {pos}  |  {selText}  |  Chars: {len(content)}  |  "
-                 f"Undo: {len(self._invoker.history)}  Redo: {len(self._invoker.redoStack)}"
+                 f"Undo: {len(self._invoker._history)}  Redo: {len(self._invoker._redoStack)}"
         )
 
     def _setCursorAt(self, pos: int):

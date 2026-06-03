@@ -36,11 +36,3 @@ class TextEditorInvoker:
         command.redo()
         self._history.append(command)
         return True
-
-    @property
-    def history(self) -> list[Command]:
-        return list(self._history)
-
-    @property
-    def redoStack(self) -> list[Command]:
-        return list(self._redoStack)

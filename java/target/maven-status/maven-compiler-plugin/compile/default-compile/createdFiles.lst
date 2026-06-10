@@ -1,0 +1,11 @@
+com\command\TextEditorInvoker.class
+com\command\DeleteCommand.class
+com\command\Client.class
+com\command\Client$1.class
+com\command\PasteCommand.class
+com\command\CutCommand.class
+com\command\TextEditor.class
+com\command\Command.class
+com\command\Client$2.class
+com\command\CopyCommand.class
+com\command\WriteCommand.class
